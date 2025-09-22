@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\AssistanceController;
 use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\ClassroomController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -32,11 +33,14 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('teachers', TeacherController::class);
     Route::resource('students', StudentController::class);
-    Route::resource('classrooms', \App\Http\Controllers\ClassroomController::class);
+    Route::resource('classrooms', ClassroomController::class);
+
+    // ✅ Import & Template
     Route::post('/teachers/import', [TeacherController::class, 'import'])->name('teachers.import');
     Route::get('/teachers/template', [TeacherController::class, 'downloadTemplate'])->name('teachers.template');
 });
 
+// 🔹 Route uji admin
 Route::middleware(['auth', 'admin'])->get('/test-admin', function () {
     return 'Halo Admin!';
 });

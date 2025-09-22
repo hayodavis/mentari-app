@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Imports\TeachersImport;
+use App\Exports\TeachersTemplateExport;
 use Maatwebsite\Excel\Facades\Excel;
 
 class TeacherController extends Controller
@@ -34,7 +35,7 @@ class TeacherController extends Controller
             'password' => 'required|string|min:6',
         ]);
 
-        // 1️⃣ Buat user baru
+        // Buat user baru
         $user = User::create([
             'name'     => $request->name,
             'email'    => $request->email,
@@ -42,7 +43,7 @@ class TeacherController extends Controller
             'role'     => 'guru',
         ]);
 
-        // 2️⃣ Buat teacher & hubungkan ke user
+        // Buat teacher & hubungkan ke user
         Teacher::create([
             'name'    => $request->name,
             'nip'     => $request->nip,
@@ -74,7 +75,7 @@ class TeacherController extends Controller
             'password' => 'nullable|string|min:6',
         ]);
 
-        // 🔹 Update user (akun login)
+        // Update user (akun login)
         if ($teacher->user) {
             $teacher->user->update([
                 'name'  => $request->name,
@@ -85,7 +86,7 @@ class TeacherController extends Controller
             ]);
         }
 
-        // 🔹 Update teacher
+        // Update teacher
         $teacher->update([
             'name'  => $request->name,
             'nip'   => $request->nip,
@@ -113,29 +114,21 @@ class TeacherController extends Controller
     public function import(Request $request)
     {
         $request->validate([
-        'file' => 'required|mimes:xlsx,csv,xls'
-    ]);
-    
-    Excel::import(new TeachersImport, $request->file('file'));
+            'file' => 'required|mimes:xlsx,csv,xls'
+        ]);
+        
+        Excel::import(new TeachersImport, $request->file('file'));
 
-    return redirect()->route('admin.teachers.index')
-        ->with('success', 'Data guru berhasil diimport!');
+        return redirect()->route('admin.teachers.index')
+            ->with('success', 'Data guru berhasil diimport!');
     }
 
     public function downloadTemplate()
     {
-    $headers = [
-        'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    ];
-
-    $fileName = 'template_guru.xlsx';
-    $path = storage_path('app/public/' . $fileName);
-
-    // Kalau template sudah dibuat via Excel::download langsung, bisa gini:
-    return \Maatwebsite\Excel\Facades\Excel::download(
-        new \App\Exports\TeachersTemplateExport,
+        return Excel::download(
+        new TeachersTemplateExport,
         $fileName,
         \Maatwebsite\Excel\Excel::XLSX
-    );
+        );
     }
 }

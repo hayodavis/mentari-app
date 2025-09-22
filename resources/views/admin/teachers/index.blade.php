@@ -1,10 +1,25 @@
 <x-app-layout>
+    @if(session('success'))
+    <div class="mb-4 p-3 bg-green-100 text-green-700 rounded">
+        {{ session('success') }}
+    </div>
+    @endif
     <div class="py-6 max-w-6xl mx-auto">
         <div class="flex justify-between items-center mb-4">
             <h1 class="text-2xl font-bold">Daftar Guru</h1>
+            <a href="{{ route('admin.teachers.template') }}" class="bg-green-600 text-white px-4 py-2 rounded">Download Template</a>
             <a href="{{ route('admin.teachers.create') }}"
             class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">+ Tambah Guru</a>
         </div>
+
+        <form action="{{ route('admin.teachers.import') }}" method="POST" enctype="multipart/form-data" class="mb-4">
+    @csrf
+    <input type="file" name="file" class="border p-2 rounded" required>
+    <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
+        Import Guru
+    </button>
+</form>
+
 
         @if(session('success'))
             <div class="mb-4 p-3 bg-green-100 text-green-700 rounded">

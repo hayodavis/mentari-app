@@ -1,45 +1,65 @@
 <x-app-layout>
-    <div class="py-6 max-w-2xl mx-auto">
-        <h1 class="text-2xl font-bold mb-4">Tambah Catatan Pendampingan</h1>
+    <div class="max-w-3xl mx-auto py-8">
+        <h1 class="text-2xl font-bold mb-6">Tambah Catatan Pendampingan</h1>
 
-        <form action="{{ route('assistances.store') }}" method="POST" class="space-y-4 bg-white shadow rounded-lg p-6">
-            @csrf
+        <div class="bg-white shadow rounded-lg p-6">
+            <form action="{{ route('assistances.store') }}" method="POST" class="space-y-4">
+                @csrf
 
-            <div>
-                <label class="block font-medium">Murid</label>
-                <select name="student_id" class="w-full border rounded px-3 py-2">
-                    @foreach($students as $s)
-                        <option value="{{ $s->id }}">{{ $s->name }} ({{ $s->class }})</option>
-                    @endforeach
-                </select>
-            </div>
+                <!-- Murid -->
+                <div>
+                    <label for="student_id" class="block font-medium text-gray-700">Murid</label>
+                    <select name="student_id" id="student_id"
+                            class="w-full border rounded px-3 py-2" required>
+                        <option value="">-- Pilih Murid --</option>
+                        @foreach($students as $student)
+                            <option value="{{ $student->id }}">
+                                {{ $student->name }} - {{ $student->classroom?->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
 
-            <div>
-                <label class="block font-medium">Tanggal</label>
-                <input type="date" name="date" class="w-full border rounded px-3 py-2" required>
-            </div>
+                <!-- Tanggal -->
+                <div>
+                    <label for="date" class="block font-medium text-gray-700">Tanggal</label>
+                    <input type="date" name="date" id="date"
+                           class="w-full border rounded px-3 py-2" required>
+                </div>
 
-            <div>
-                <label class="block font-medium">Topik</label>
-                <input type="text" name="topic" class="w-full border rounded px-3 py-2" required>
-            </div>
+                <!-- Topik -->
+                <div>
+                    <label for="topic" class="block font-medium text-gray-700">Topik</label>
+                    <input type="text" name="topic" id="topic"
+                           class="w-full border rounded px-3 py-2" required>
+                </div>
 
-            <div>
-                <label class="block font-medium">Catatan</label>
-                <textarea name="notes" class="w-full border rounded px-3 py-2"></textarea>
-            </div>
+                <!-- Catatan -->
+                <div>
+                    <label for="notes" class="block font-medium text-gray-700">Catatan</label>
+                    <textarea name="notes" id="notes"
+                              class="w-full border rounded px-3 py-2"></textarea>
+                </div>
 
-            <div>
-                <label class="block font-medium">Tindak Lanjut</label>
-                <input type="text" name="follow_up" class="w-full border rounded px-3 py-2">
-            </div>
+                <!-- Tindak Lanjut -->
+                <div>
+                    <label for="follow_up" class="block font-medium text-gray-700">Tindak Lanjut</label>
+                    <input type="text" name="follow_up" id="follow_up"
+                           class="w-full border rounded px-3 py-2">
+                </div>
 
-            <div class="flex justify-end">
-                <a href="{{ route('assistances.index') }}" class="px-4 py-2 bg-gray-300 rounded-lg mr-2">Batal</a>
-                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                    Simpan
-                </button>
-            </div>
-        </form>
+                <!-- Tombol -->
+                <div class="flex justify-end space-x-2">
+                    <a href="{{ route('assistances.index') }}"
+                       class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">
+                        Batal
+                    </a>
+                    <button type="submit"
+                            class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                        Simpan
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </x-app-layout>

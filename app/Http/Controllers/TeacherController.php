@@ -6,6 +6,8 @@ use App\Models\Teacher;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Imports\TeachersImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TeacherController extends Controller
 {
@@ -106,5 +108,34 @@ class TeacherController extends Controller
 
         return redirect()->route($this->routeBase . 'index')
             ->with('success', 'Guru beserta akun login berhasil dihapus.');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+        'file' => 'required|mimes:xlsx,csv,xls'
+    ]);
+    
+    Excel::import(new TeachersImport, $request->file('file'));
+
+    return redirect()->route('admin.teachers.index')
+        ->with('success', 'Data guru berhasil diimport!');
+    }
+
+    public function downloadTemplate()
+    {
+    $headers = [
+        'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ];
+
+    $fileName = 'template_guru.xlsx';
+    $path = storage_path('app/public/' . $fileName);
+
+    // Kalau template sudah dibuat via Excel::download langsung, bisa gini:
+    return \Maatwebsite\Excel\Facades\Excel::download(
+        new \App\Exports\TeachersTemplateExport,
+        $fileName,
+        \Maatwebsite\Excel\Excel::XLSX
+    );
     }
 }

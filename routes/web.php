@@ -33,6 +33,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('teachers', TeacherController::class);
     Route::resource('students', StudentController::class);
     Route::resource('classrooms', \App\Http\Controllers\ClassroomController::class);
+    Route::post('/teachers/import', [TeacherController::class, 'import'])->name('teachers.import');
+    Route::get('/teachers/template', [TeacherController::class, 'downloadTemplate'])->name('teachers.template');
 });
 
 Route::middleware(['auth', 'admin'])->get('/test-admin', function () {

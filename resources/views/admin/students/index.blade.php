@@ -14,6 +14,7 @@
                     <th class="px-4 py-2 border">Kelas</th>
                     <th class="px-4 py-2 border">Gender</th>
                     <th class="px-4 py-2 border">Guru Wali</th>
+                    <th class="px-4 py-2 border">Kontak Ortu</th> {{-- ✅ Tambahan --}}
                     <th class="px-4 py-2 border">Aksi</th>
                 </tr>
             </thead>
@@ -25,6 +26,7 @@
                         <td class="px-4 py-2 border">{{ $s->classroom?->name ?? '-' }}</td>
                         <td class="px-4 py-2 border">{{ $s->gender == 'L' ? 'Laki-laki' : 'Perempuan' }}</td>
                         <td class="px-4 py-2 border">{{ $s->teacher?->name ?? '-' }}</td>
+                        <td class="px-4 py-2 border">{{ $s->parent_contact ?? '-' }}</td> {{-- ✅ Tampilkan kontak ortu --}}
                         <td class="px-4 py-2 border">
                             <a href="{{ route('admin.students.show', $s->id) }}" class="px-2 py-1 bg-gray-500 text-white rounded">Lihat</a>
                             <a href="{{ route('admin.students.edit', $s->id) }}" class="px-2 py-1 bg-blue-500 text-white rounded">Edit</a>

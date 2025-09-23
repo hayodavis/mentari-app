@@ -125,13 +125,13 @@ class TeacherController extends Controller
 
     public function downloadTemplate()
     {
-        $filePath = storage_path('app/public/teachers_template.xlsx');
+        $filePath = storage_path('app/public/template_guru.xlsx');
 
         if (!file_exists($filePath)) {
             abort(404, 'Template tidak ditemukan.');
         }
 
-        return response()->download($filePath, 'teachers_template.xlsx', [
+        return response()->download($filePath, 'template_guru.xlsx', [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ]);
     }

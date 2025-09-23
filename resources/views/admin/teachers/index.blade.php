@@ -11,7 +11,7 @@
         <div class="flex justify-between items-center mb-4">
             <h1 class="text-2xl font-bold">Daftar Guru</h1>
             <div class="space-x-2">
-                <a href="{{ route('admin.teachers.template') }}"
+                <a href="http://127.0.0.1:8000/storage/template_guru.xlsx"
                    class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
                     Download Template
                 </a>

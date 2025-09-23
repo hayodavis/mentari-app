@@ -125,10 +125,14 @@ class TeacherController extends Controller
 
     public function downloadTemplate()
     {
-        return Excel::download(
-        new TeachersTemplateExport,
-        $fileName,
-        \Maatwebsite\Excel\Excel::XLSX
-        );
+        $filePath = storage_path('app/public/teachers_template.xlsx');
+
+        if (!file_exists($filePath)) {
+            abort(404, 'Template tidak ditemukan.');
+        }
+
+        return response()->download($filePath, 'teachers_template.xlsx', [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
     }
 }

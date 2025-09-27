@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\Classroom;
+use App\Imports\StudentsImport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 
 class StudentController extends Controller
@@ -101,5 +103,30 @@ class StudentController extends Controller
 
         return redirect()->route($this->routeBase . 'index')
             ->with('success', 'Siswa berhasil dihapus.');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,csv,xls'
+        ]);
+
+        Excel::import(new StudentsImport, $request->file('file'));
+
+        return redirect()->route('admin.students.index')
+            ->with('success', 'Data siswa berhasil diimport!');
+    }
+
+    public function downloadTemplate()
+    {
+        $filePath = storage_path('app/public/template_siswa.xlsx');
+
+        if (!file_exists($filePath)) {
+            abort(404, 'Template siswa tidak ditemukan.');
+        }
+
+        return response()->download($filePath, 'template_siswa.xlsx', [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
     }
 }

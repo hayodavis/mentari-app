@@ -6,6 +6,19 @@
             + Tambah Murid
         </a>
 
+        <a href="{{ route('admin.students.template') }}" 
+        class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+        Download Template Siswa
+        </a>
+
+        <form action="{{ route('admin.students.import') }}" method="POST" enctype="multipart/form-data" class="mb-4">
+            @csrf
+            <input type="file" name="file" class="border p-2 rounded" required>
+            <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
+                Import Siswa
+            </button>
+        </form>
+
         <table class="w-full border-collapse bg-white shadow rounded-lg overflow-hidden">
             <thead class="bg-gray-200">
                 <tr>

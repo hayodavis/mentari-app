@@ -15,7 +15,7 @@ class Student extends Model
     protected $fillable = [
         'nisn',
         'name',
-        'class',
+        'classroom_id',   // ✅ perbaiki
         'gender',
         'parent_contact',
         'notes',
@@ -40,6 +40,10 @@ class Student extends Model
         return $this->hasMany(Assistance::class);
     }
 
+    /**
+     * Relasi ke Kelas (Classroom).
+     * Satu siswa hanya punya satu kelas.
+     */
     public function classroom()
     {
         return $this->belongsTo(Classroom::class);

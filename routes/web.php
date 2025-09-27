@@ -38,6 +38,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // ✅ Import & Template
     Route::post('/teachers/import', [TeacherController::class, 'import'])->name('teachers.import');
     Route::get('/teachers/template', [TeacherController::class, 'downloadTemplate'])->name('teachers.template');
+
+    // ✅ Import siswa
+    Route::post('/students/import', [StudentController::class, 'import'])->name('students.import');
+    Route::get('/students/template', [StudentController::class, 'downloadTemplate'])->name('students.template');
 });
 
 // 🔹 Route uji admin

@@ -14,9 +14,24 @@ class TeacherController extends Controller
 {
     protected $routeBase = 'admin.teachers.';
 
-    public function index()
+    public function index(Request $request)
     {
-        $teachers = Teacher::with('user')->latest()->paginate(10);
+        $query = Teacher::with('user')->latest();
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%$search%")
+                ->orWhere('nip', 'like', "%$search%")
+                ->orWhere('phone', 'like', "%$search%")
+                ->orWhereHas('user', function ($qu) use ($search) {
+                    $qu->where('email', 'like', "%$search%");
+                });
+            });
+        }
+
+        $teachers = $query->paginate(10);
+
         return view('admin.teachers.index', compact('teachers'));
     }
 

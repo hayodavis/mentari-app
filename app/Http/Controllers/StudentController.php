@@ -16,9 +16,26 @@ class StudentController extends Controller
     /**
      * Daftar semua siswa
      */
-    public function index()
+    public function index(Request $request)
     {
-        $students = Student::with(['teacher', 'classroom'])->latest()->paginate(10);
+        $query = Student::with(['teacher', 'classroom'])->latest();
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nisn', 'like', "%$search%")
+                ->orWhere('name', 'like', "%$search%")
+                ->orWhereHas('classroom', function ($qc) use ($search) {
+                    $qc->where('name', 'like', "%$search%");
+                })
+                ->orWhereHas('teacher', function ($qt) use ($search) {
+                    $qt->where('name', 'like', "%$search%");
+                });
+            });
+        }
+
+        $students = $query->paginate(10);
+
         return view('admin.students.index', compact('students'));
     }
 

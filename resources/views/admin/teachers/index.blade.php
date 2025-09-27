@@ -33,6 +33,15 @@
             </button>
         </form>
 
+        <form action="{{ route('admin.teachers.index') }}" method="GET" class="mb-4 flex gap-2">
+            <input type="text" name="search" value="{{ request('search') }}"
+            class="border p-2 rounded w-1/3" placeholder="Cari guru (nama, NIP, email, hp)">
+            <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
+                Cari
+            </button>
+        </form>
+
+
         {{-- ✅ Tabel Daftar Guru --}}
         <div class="overflow-x-auto bg-white shadow rounded-lg">
             <table class="min-w-full border-collapse">
@@ -77,7 +86,7 @@
 
         {{-- ✅ Pagination --}}
         <div class="mt-4">
-            {{ $teachers->links() }}
+            {{ $teachers->withQueryString()->links() }}
         </div>
     </div>
 </x-app-layout>

@@ -33,6 +33,20 @@
             </button>
         </form>
 
+        <form method="GET" action="{{ route('admin.students.index') }}" class="mb-4 flex gap-2">
+            <input type="text" name="search" value="{{ request('search') }}"
+            placeholder="Cari NISN / Nama / Kelas / Guru"
+            class="border px-3 py-2 rounded w-1/3">
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                Cari
+            </button>
+            @if(request('search'))
+            <a href="{{ route('admin.students.index') }}"
+            class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+            Reset</a>
+            @endif
+        </form>
+
         {{-- Table --}}
         <div class="overflow-x-auto bg-white shadow rounded-lg">
             <table class="min-w-full text-sm text-left border-collapse">
@@ -86,7 +100,7 @@
 
         {{-- Pagination --}}
         <div class="mt-4">
-            {{ $students->links('pagination::tailwind') }}
+            {{ $students->appends(['search' => request('search')])->links() }}
         </div>
     </div>
 </x-app-layout>

@@ -9,10 +9,25 @@ class ClassroomController extends Controller
 {
     protected $routeBase = 'admin.classrooms.';
 
-    public function index()
+    public function index(Request $request)
     {
-        $classrooms = Classroom::latest()->paginate(10);
-        return view('admin.classrooms.index', compact('classrooms'));
+        $query = \App\Models\Classroom::query();
+
+    if ($request->filled('search')) {
+        $query->where('name', 'like', '%' . $request->search . '%')
+        ->orWhere('description', 'like', '%' . $request->search . '%');
+    }
+
+    $classrooms = $query->orderByRaw("
+        CASE 
+            WHEN name LIKE 'X %' THEN 1
+            WHEN name LIKE 'XI %' THEN 2
+            WHEN name LIKE 'XII %' THEN 3
+            ELSE 4
+        END, name ASC
+    ")->paginate(10);
+
+    return view('admin.classrooms.index', compact('classrooms'));
     }
 
     public function create()

@@ -17,6 +17,7 @@ class Assistance extends Model
         'follow_up',
     ];
 
+
     public function student()
     {
         return $this->belongsTo(Student::class);

@@ -13,12 +13,36 @@ class AssistanceController extends Controller
     /**
      * Daftar semua catatan pendampingan
      */
-    public function index()
+    public function index(Request $request)
     {
-        $assistances = Assistance::with('student')->latest()->paginate(15);
-        $students = Student::orderBy('name')->get();
+        $query = \App\Models\Assistance::with('student');
+        
+        // 🔍 Pencarian berdasarkan nama murid atau topik
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('student', function ($q) use ($search) {
+            $q->where('name', 'like', "%{$search}%");
+        })->orWhere('topic', 'like', "%{$search}%");
+    }
 
-        return view('assistances.index', compact('assistances', 'students'));
+        // 🎯 Filter berdasarkan topik
+        if ($request->filled('topic')) {
+            $query->where('topic', $request->topic);
+        }
+
+        // 📅 Urutkan berdasarkan tanggal
+        $sort = $request->get('sort', 'desc'); // default terbaru
+        $query->orderBy('date', $sort);
+
+        $assistances = $query->paginate(10);
+
+        // daftar topik untuk filter dropdown
+        $topics = ['Kedisiplinan', 'Prestasi', 'Absensi', 'Akademik', 'Lainnya'];
+
+        return view('assistances.index', compact('assistances', 'topics'))
+            ->with('sort', $sort)
+            ->with('search', $request->search)
+            ->with('selectedTopic', $request->topic);
     }
 
     /**

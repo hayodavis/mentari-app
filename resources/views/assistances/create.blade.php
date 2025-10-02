@@ -14,7 +14,7 @@
                         <option value="">-- Pilih Murid --</option>
                         @foreach($students as $student)
                             <option value="{{ $student->id }}">
-                                {{ $student->name }} - {{ $student->classroom?->name }}
+                                {{ $student->name }} - {{ $student->classroom?->name ?? '-' }}
                             </option>
                         @endforeach
                     </select>
@@ -30,12 +30,12 @@
                 <!-- Topik -->
                 <div>
                     <label for="topic" class="block mb-1 font-medium">Topik</label>
-                    <select name="topic" id="topic" class="w-full border rounded p-2">
+                    <select name="topic" id="topic" class="w-full border rounded p-2" required>
                         <option value="">-- Pilih Topik --</option>
                         <option value="Kedisiplinan">Kedisiplinan</option>
                         <option value="Prestasi">Prestasi</option>
-                        <option value="Perilaku">Perilaku</option>
-                        <option value="Kehadiran">Kehadiran</option>
+                        <option value="Absensi">Absensi</option>
+                        <option value="Akademik">Akademik</option>
                         <option value="Lainnya">Lainnya</option>
                     </select>
                 </div>
@@ -52,6 +52,16 @@
                     <label for="follow_up" class="block font-medium text-gray-700">Tindak Lanjut</label>
                     <input type="text" name="follow_up" id="follow_up"
                            class="w-full border rounded px-3 py-2">
+                </div>
+
+                <!-- Status -->
+                <div>
+                    <label for="status" class="block mb-1 font-medium">Status</label>
+                    <select name="status" id="status" class="w-full border rounded p-2" required>
+                        <option value="pending">⏳ Pending</option>
+                        <option value="in_progress">🔄 Sedang Diproses</option>
+                        <option value="done">✅ Selesai</option>
+                    </select>
                 </div>
 
                 <!-- Tombol -->

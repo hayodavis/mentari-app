@@ -15,6 +15,7 @@ class Assistance extends Model
         'topic',
         'notes',
         'follow_up',
+        'status', 
     ];
 
 

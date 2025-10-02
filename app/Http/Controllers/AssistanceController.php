@@ -15,19 +15,26 @@ class AssistanceController extends Controller
      */
     public function index(Request $request)
     {
-        $query = \App\Models\Assistance::with('student');
-        
+        $query = Assistance::with('student');
+
         // 🔍 Pencarian berdasarkan nama murid atau topik
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->whereHas('student', function ($q) use ($search) {
-            $q->where('name', 'like', "%{$search}%");
-        })->orWhere('topic', 'like', "%{$search}%");
-    }
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('student', function ($q2) use ($search) {
+                    $q2->where('name', 'like', "%{$search}%");
+                })
+                ->orWhere('topic', 'like', "%{$search}%");
+            });
+        }
 
         // 🎯 Filter berdasarkan topik
         if ($request->filled('topic')) {
             $query->where('topic', $request->topic);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
         }
 
         // 📅 Urutkan berdasarkan tanggal
@@ -65,12 +72,14 @@ class AssistanceController extends Controller
             'topic'       => 'required|string|max:255',
             'notes'       => 'nullable|string',
             'follow_up'   => 'nullable|string|max:255',
+            'status'      => 'required|in:pending,in_progress,done', // ✅ validasi status
         ]);
 
-        Assistance::create($request->all());
+        Assistance::create($request->only([
+            'student_id','date','topic','notes','follow_up','status'
+        ]));
 
-        return redirect()->route($this->routeBase . 'index')
-            ->with('success', 'Catatan pendampingan berhasil ditambahkan.');
+        return redirect()->route('assistances.index')->with('success', 'Catatan berhasil disimpan.');
     }
 
     /**
@@ -93,12 +102,14 @@ class AssistanceController extends Controller
             'topic'       => 'required|string|max:255',
             'notes'       => 'nullable|string',
             'follow_up'   => 'nullable|string|max:255',
+            'status'      => 'required|in:pending,in_progress,done',
         ]);
 
-        $assistance->update($request->all());
+        $assistance->update($request->only([
+            'student_id','date','topic','notes','follow_up','status'
+        ]));
 
-        return redirect()->route($this->routeBase . 'index')
-            ->with('success', 'Catatan pendampingan berhasil diperbarui.');
+        return redirect()->route('assistances.index')->with('success', 'Catatan berhasil diperbarui.');
     }
 
     /**
@@ -108,7 +119,7 @@ class AssistanceController extends Controller
     {
         $assistance->delete();
 
-        return redirect()->route($this->routeBase . 'index')
+        return redirect()->route('assistances.index')
             ->with('success', 'Catatan pendampingan berhasil dihapus.');
     }
 
@@ -122,9 +133,12 @@ class AssistanceController extends Controller
             'topic'     => 'required|string|max:255',
             'notes'     => 'nullable|string',
             'follow_up' => 'nullable|string|max:255',
+            'status'    => 'required|in:pending,in_progress,done', // ✅ tambahkan status
         ]);
 
-        $student->assistances()->create($request->all());
+        $student->assistances()->create($request->only([
+            'date', 'topic', 'notes', 'follow_up', 'status'
+        ]));
 
         return redirect()->route('admin.students.show', $student->id)
             ->with('success', 'Catatan pendampingan berhasil ditambahkan untuk siswa.');

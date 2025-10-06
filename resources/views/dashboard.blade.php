@@ -69,54 +69,52 @@
             @endif
         </div>
 
-        <!-- 🏆 Top 5 Guru dengan Catatan Terbanyak (Versi Carousel) -->
-<div class="bg-white shadow rounded-lg p-4 sm:p-6">
-    <h2 class="text-base sm:text-lg font-bold mb-4 text-center sm:text-left">
-        🏆 Top 5 Guru dengan Catatan Pendampingan Terbanyak
-    </h2>
+        <!-- 🏆 Top 5 Guru dengan Catatan Terbanyak -->
+        <div class="bg-white shadow rounded-lg p-4 sm:p-6">
+            <h2 class="text-base sm:text-lg font-bold mb-4 text-center sm:text-left">
+                🏆 Top 5 Guru dengan Catatan Pendampingan Terbanyak
+            </h2>
 
-    @if($topTeachers->isEmpty())
-        <div class="text-gray-500 text-center sm:text-left">Belum ada data guru.</div>
-    @else
-        <div class="overflow-x-auto pb-4">
-            <div class="flex space-x-4 sm:space-x-6 min-w-max">
-                @foreach($topTeachers as $index => $t)
-                    @php
-                        $medal = match($index) {
-                            0 => '🥇',
-                            1 => '🥈',
-                            2 => '🥉',
-                            default => '🎓'
-                        };
-                        $bgColor = match($index) {
-                            0 => 'bg-yellow-100 border-yellow-400',
-                            1 => 'bg-gray-100 border-gray-400',
-                            2 => 'bg-amber-100 border-amber-400',
-                            default => 'bg-indigo-50 border-indigo-300'
-                        };
-                    @endphp
+            @if($topTeachers->isEmpty())
+                <div class="text-gray-500 text-center sm:text-left">Belum ada data guru.</div>
+            @else
+                <div class="overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                    <div class="flex space-x-4 sm:space-x-6 min-w-max snap-x snap-mandatory px-1">
+                        @foreach($topTeachers as $index => $t)
+                            @php
+                                $medal = match($index) {
+                                    0 => '🥇',
+                                    1 => '🥈',
+                                    2 => '🥉',
+                                    default => '🎓'
+                                };
+                                $bgColor = match($index) {
+                                    0 => 'bg-yellow-100 border-yellow-400',
+                                    1 => 'bg-gray-100 border-gray-400',
+                                    2 => 'bg-amber-100 border-amber-400',
+                                    default => 'bg-indigo-50 border-indigo-300'
+                                };
+                            @endphp
 
-                    <div class="flex-shrink-0 w-56 sm:w-60 md:w-64 border {{ $bgColor }} rounded-2xl shadow-sm hover:shadow-md transition transform hover:-translate-y-1">
-                        <div class="p-4 flex flex-col items-center text-center">
-                            <span class="text-4xl mb-2">{{ $medal }}</span>
-                            <p class="font-semibold text-lg text-gray-800">{{ $t->name }}</p>
-                            <p class="text-sm text-gray-500 mb-3">{{ $t->nip ?? '-' }}</p>
+                            <div class="flex-shrink-0 w-52 sm:w-56 md:w-60 border {{ $bgColor }} rounded-2xl shadow-sm hover:shadow-md transition transform hover:-translate-y-1 snap-center">
+                                <div class="p-4 flex flex-col items-center text-center">
+                                    <span class="text-4xl mb-2">{{ $medal }}</span>
+                                    <p class="font-semibold text-sm sm:text-lg text-gray-800">{{ $t->name }}</p>
+                                    <p class="text-xs sm:text-sm text-gray-500 mb-3">{{ $t->nip ?? '-' }}</p>
 
-                            <div class="w-full h-2 bg-gray-200 rounded-full mb-2">
-                                <div class="h-2 bg-indigo-500 rounded-full" style="width: {{ min(100, $t->total_assistances * 20) }}%"></div>
+                                    <div class="w-full h-2 bg-gray-200 rounded-full mb-2">
+                                        <div class="h-2 bg-indigo-500 rounded-full" style="width: {{ min(100, $t->total_assistances * 20) }}%"></div>
+                                    </div>
+
+                                    <span class="text-xs sm:text-sm font-medium text-indigo-700 bg-indigo-100 px-3 py-1 rounded-full whitespace-nowrap">
+                                        {{ $t->total_assistances }} catatan
+                                    </span>
+                                </div>
                             </div>
-
-                            <span class="text-xs sm:text-sm font-medium text-indigo-700 bg-indigo-100 px-3 py-1 rounded-full">
-                                {{ $t->total_assistances }} catatan
-                            </span>
-                        </div>
+                        @endforeach
                     </div>
-                @endforeach
-            </div>
+                </div>
+            @endif
         </div>
-    @endif
-</div>
-
-
     </div>
 </x-app-layout>

@@ -31,4 +31,13 @@ class Teacher extends Model
     {
         return $this->hasMany(Student::class, 'teacher_id');
     }
+
+    /**
+     * Relasi tidak langsung ke Catatan Pendampingan (Assistance)
+     * melalui siswa yang dibimbing oleh guru ini.
+     */
+    public function assistances()
+    {
+        return $this->hasManyThrough(Assistance::class, Student::class, 'teacher_id', 'student_id');
+    }
 }

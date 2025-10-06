@@ -5,15 +5,17 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\AssistanceController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\ClassroomController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// ✅ Dashboard pakai controller (bukan closure)
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 // 🔹 Route umum (semua user login)
 Route::middleware('auth')->group(function () {
@@ -35,11 +37,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('students', StudentController::class);
     Route::resource('classrooms', ClassroomController::class);
 
-    // ✅ Import & Template
+    // ✅ Import & Template Guru
     Route::post('/teachers/import', [TeacherController::class, 'import'])->name('teachers.import');
     Route::get('/teachers/template', [TeacherController::class, 'downloadTemplate'])->name('teachers.template');
 
-    // ✅ Import siswa
+    // ✅ Import & Template Siswa
     Route::post('/students/import', [StudentController::class, 'import'])->name('students.import');
     Route::get('/students/template', [StudentController::class, 'downloadTemplate'])->name('students.template');
 });

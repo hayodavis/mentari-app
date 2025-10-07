@@ -15,41 +15,55 @@ class AssistanceController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Assistance::with('student');
+        $user = auth()->user();
+    $query = Assistance::with('student');
 
-        // 🔍 Pencarian berdasarkan nama murid atau topik
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->whereHas('student', function ($q2) use ($search) {
-                    $q2->where('name', 'like', "%{$search}%");
-                })
-                ->orWhere('topic', 'like', "%{$search}%");
+    // 🔹 Filter otomatis untuk guru
+    if ($user->role === 'guru') {
+        $teacher = \App\Models\Teacher::where('user_id', $user->id)->first();
+
+        if ($teacher) {
+            $query->whereHas('student', function ($q) use ($teacher) {
+                $q->where('teacher_id', $teacher->id);
             });
+        } else {
+            // Jika guru belum punya data di tabel teachers
+            $query->whereRaw('1=0'); // tidak tampilkan data apa pun
         }
+    }
 
-        // 🎯 Filter berdasarkan topik
-        if ($request->filled('topic')) {
-            $query->where('topic', $request->topic);
-        }
+    // 🔍 Pencarian
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $query->where(function ($q) use ($search) {
+            $q->whereHas('student', function ($q2) use ($search) {
+                $q2->where('name', 'like', "%{$search}%");
+            })
+            ->orWhere('topic', 'like', "%{$search}%");
+        });
+    }
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
+    // 🎯 Filter topik & status
+    if ($request->filled('topic')) {
+        $query->where('topic', $request->topic);
+    }
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
+    }
 
-        // 📅 Urutkan berdasarkan tanggal
-        $sort = $request->get('sort', 'desc'); // default terbaru
-        $query->orderBy('date', $sort);
+    // 📅 Urutkan berdasarkan tanggal
+    $sort = $request->get('sort', 'desc');
+    $query->orderBy('date', $sort);
 
-        $assistances = $query->paginate(10);
+    $assistances = $query->paginate(10);
 
-        // daftar topik untuk filter dropdown
-        $topics = ['Kedisiplinan', 'Prestasi', 'Absensi', 'Akademik', 'Lainnya'];
+    // daftar topik untuk filter dropdown
+    $topics = ['Kedisiplinan', 'Prestasi', 'Absensi', 'Akademik', 'Lainnya'];
 
-        return view('assistances.index', compact('assistances', 'topics'))
-            ->with('sort', $sort)
-            ->with('search', $request->search)
-            ->with('selectedTopic', $request->topic);
+    return view('assistances.index', compact('assistances', 'topics'))
+        ->with('sort', $sort)
+        ->with('search', $request->search)
+        ->with('selectedTopic', $request->topic);
     }
 
     /**
@@ -57,7 +71,26 @@ class AssistanceController extends Controller
      */
     public function create()
     {
-        $students = Student::orderBy('name')->get();
+        $user = auth()->user();
+
+        // Jika role guru, ambil data guru berdasarkan user_id
+        if ($user->role === 'guru') {
+            $teacher = \App\Models\Teacher::where('user_id', $user->id)->first();
+
+            if ($teacher) {
+            // Ambil hanya siswa binaan guru tersebut
+                $students = Student::where('teacher_id', $teacher->id)
+                    ->orderBy('name')
+                    ->get();
+            } else {
+                // Jika guru belum punya data di tabel teachers
+                $students = collect(); // kirim kosong biar tidak error
+            }
+        } else {
+            // Admin tetap bisa lihat semua siswa
+            $students = Student::orderBy('name')->get();
+        }
+
         return view('assistances.create', compact('students'));
     }
 
@@ -87,7 +120,29 @@ class AssistanceController extends Controller
      */
     public function edit(Assistance $assistance)
     {
-        $students = Student::orderBy('name')->get();
+        $user = auth()->user();
+
+        if ($user->role === 'guru') {
+            $teacher = \App\Models\Teacher::where('user_id', $user->id)->first();
+
+            if (!$teacher) {
+                abort(403, 'Akses ditolak: Anda belum terdaftar sebagai guru.');
+            }
+
+            // 🔒 Pastikan catatan ini benar-benar milik siswa binaan guru tersebut
+            if ($assistance->student->teacher_id !== $teacher->id) {
+                abort(403, 'Akses ditolak: Catatan ini bukan untuk siswa binaan Anda.');
+            }
+
+            // 🔹 Tampilkan hanya murid binaan guru tersebut di dropdown
+            $students = Student::where('teacher_id', $teacher->id)
+                ->orderBy('name')
+                ->get();
+        } else {
+            // Admin bisa mengakses semua siswa
+            $students = Student::orderBy('name')->get();
+        }
+
         return view('assistances.edit', compact('assistance', 'students'));
     }
 

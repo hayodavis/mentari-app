@@ -42,6 +42,11 @@
                 </div>
             </form>
         </div>
+
+        <!-- Footer -->
+        <footer class="mt-8 text-gray-600 text-sm text-center animate-fade-in-up">
+            &copy; 2025 <span class="font-semibold text-indigo-600">Davis</span> - SMKN 2 Bangkalan
+        </footer>
     </div>
 
     <!-- Animations -->

@@ -11,9 +11,7 @@ use Illuminate\Http\Request;
 use App\Models\Student;
 
 // 🔹 Redirect root ke halaman login
-Route::get('/', function () {
-    return redirect()->route('login');
-});
+Route::get('/', fn() => redirect()->route('login'));
 
 // 🔹 Dashboard utama
 Route::get('/dashboard', [DashboardController::class, 'index'])
@@ -48,22 +46,10 @@ Route::middleware(['auth'])->group(function () {
         ->name('students.assistances.store');
 
     /**
-     * 🔍 Endpoint Pencarian Siswa (untuk autocomplete di form laporan)
+     * 🔍 Endpoint Pencarian Siswa (autocomplete di form laporan)
+     * Hasil pencarian otomatis menghapus duplikat berdasarkan kombinasi nama + kelas
      */
-    Route::get('/students/search', function (Request $request) {
-        $q = $request->get('q');
-        $students = Student::with('classroom')
-            ->where('name', 'like', "%{$q}%")
-            ->orderBy('name')
-            ->limit(10)
-            ->get()
-            ->map(fn($s) => [
-                'id' => $s->id,
-                'name' => $s->name,
-                'classroom' => $s->classroom?->name,
-            ]);
-        return response()->json($students);
-    })->name('students.search');
+    Route::get('/students/search', [StudentController::class, 'search'])->name('students.search');
 });
 
 // 🔹 Route khusus admin
@@ -82,8 +68,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 });
 
 // 🔹 Route uji admin
-Route::middleware(['auth', 'admin'])->get('/test-admin', function () {
-    return 'Halo Admin!';
-});
+Route::middleware(['auth', 'admin'])->get('/test-admin', fn() => 'Halo Admin!');
 
 require __DIR__ . '/auth.php';

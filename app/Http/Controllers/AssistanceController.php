@@ -210,30 +210,36 @@ public function reportForm()
     return view('assistances.report', compact('students'));
 }
 
-/**
- * Simpan laporan siswa non-binaan
- */
 public function storeReport(Request $request)
 {
     $request->validate([
         'student_id' => 'required|exists:students,id',
-        'date' => 'required|date',
-        'topic' => 'required|string|max:255',
-        'notes' => 'nullable|string',
-        'follow_up' => 'nullable|string|max:255',
-        'status' => 'required|in:pending,in_progress,done',
+        'date'       => 'required|date',
+        'topic'      => 'required|string|max:255',
+        'notes'      => 'nullable|string',
+        'follow_up'  => 'nullable|string|max:255',
     ]);
 
+    // 🔹 Ambil guru yang sedang login
+    $teacher = \App\Models\Teacher::where('user_id', auth()->id())->first();
+
+    if (!$teacher) {
+        return back()->with('error', 'Akun Anda belum terhubung ke data guru.');
+    }
+
+    // 🔹 Simpan laporan
     \App\Models\Assistance::create([
-        'student_id' => $request->student_id,
-        'date' => $request->date,
-        'topic' => $request->topic,
-        'notes' => $request->notes,
-        'follow_up' => $request->follow_up,
-        'status' => $request->status,
+        'student_id'  => $request->student_id,
+        'reported_by' => $teacher->id, // ✅ gunakan ID guru
+        'date'        => $request->date,
+        'topic'       => $request->topic,
+        'notes'       => $request->notes,
+        'follow_up'   => $request->follow_up,
+        'status'      => 'pending',
     ]);
 
-    return redirect()->route('assistances.index')->with('success', 'Laporan berhasil dikirim ke guru wali.');
+    return redirect()->route('assistances.index')
+        ->with('success', 'Laporan berhasil dikirim ke guru wali.');
 }
 
 }

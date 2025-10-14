@@ -146,4 +146,20 @@ class StudentController extends Controller
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ]);
     }
+
+    public function search(Request $request)
+{
+    $query = $request->get('q', '');
+
+    $students = Student::query()
+        ->join('classrooms', 'students.classroom_id', '=', 'classrooms.id')
+        ->selectRaw('MIN(students.id) as id, students.name, classrooms.name as classroom')
+        ->when($query, fn($q) => $q->where('students.name', 'like', "%{$query}%"))
+        ->groupBy('students.name', 'classrooms.name')
+        ->orderBy('students.name')
+        ->limit(20)
+        ->get();
+
+    return response()->json($students);
+}
 }

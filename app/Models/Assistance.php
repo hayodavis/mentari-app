@@ -11,6 +11,7 @@ class Assistance extends Model
 
     protected $fillable = [
         'student_id',
+        'reported_by',
         'date',
         'topic',
         'notes',

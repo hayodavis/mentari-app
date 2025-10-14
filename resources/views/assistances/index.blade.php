@@ -4,18 +4,16 @@
 <div class="bg-white shadow rounded-lg p-4 sm:p-6">
 
     <!-- Header & Tombol Tambah -->
-    <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2">
+    <div class="flex flex-col sm:flex-row justify-between items-center mb-4">
         <h1 class="text-lg sm:text-xl font-bold mb-2 sm:mb-0">📑 Catatan Pendampingan</h1>
-        
-        <div class="flex gap-2 flex-wrap">
-            <a href="{{ route('assistances.create') }}" 
-               class="bg-indigo-600 text-white px-3 py-2 rounded hover:bg-indigo-700 text-sm sm:text-base">
-                + Tambah Catatan
-            </a>
-
+        <div class="flex gap-2">
             <a href="{{ route('assistances.report.form') }}" 
                class="bg-red-600 text-white px-3 py-2 rounded hover:bg-red-700 text-sm sm:text-base">
                 🚨 Laporkan Siswa
+            </a>
+            <a href="{{ route('assistances.create') }}" 
+               class="bg-indigo-600 text-white px-3 py-2 rounded hover:bg-indigo-700 text-sm sm:text-base">
+                + Tambah Catatan
             </a>
         </div>
     </div>
@@ -31,10 +29,12 @@
     <form method="GET" action="{{ route('assistances.index') }}" 
           class="flex flex-col sm:flex-row sm:items-center gap-2 mb-4 flex-wrap">
 
+        <!-- Pencarian -->
         <input type="text" name="search" value="{{ request('search') }}" 
                placeholder="Cari nama murid atau topik..." 
                class="border rounded px-3 py-2 w-full sm:w-1/3 text-sm focus:ring-indigo-300 focus:outline-none">
 
+        <!-- Filter Status -->
         <select name="status" onchange="this.form.submit()" 
                 class="border rounded px-8 py-2 w-full sm:w-auto text-sm">
             <option value="">Semua Status</option>
@@ -43,12 +43,14 @@
             <option value="done" {{ request('status') == 'done' ? 'selected' : '' }}>✅ Selesai</option>
         </select>
 
+        <!-- Sorting -->
         <select name="sort" onchange="this.form.submit()" 
                 class="border rounded px-8 py-2 w-full sm:w-auto text-sm">
             <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Terbaru</option>
             <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>Terlama</option>
         </select>
 
+        <!-- Tombol Cari -->
         <button type="submit" 
                 class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm">
             🔍 Cari
@@ -62,6 +64,7 @@
                 <tr>
                     <th class="px-4 py-2 text-left font-semibold">Tanggal</th>
                     <th class="px-4 py-2 text-left font-semibold">Murid</th>
+                    <th class="px-4 py-2 text-left font-semibold">Dilaporkan Oleh</th>
                     <th class="px-4 py-2 text-left font-semibold">Topik</th>
                     <th class="px-4 py-2 text-left font-semibold">Catatan</th>
                     <th class="px-4 py-2 text-center font-semibold">Status</th>
@@ -73,6 +76,9 @@
                     <tr class="hover:bg-gray-50">
                         <td class="px-4 py-2 whitespace-nowrap">{{ $a->date }}</td>
                         <td class="px-4 py-2 whitespace-nowrap">{{ $a->student?->name ?? '-' }}</td>
+                        <td class="px-4 py-2 whitespace-nowrap">
+                            {{ $a->reporter?->name ?? '—' }}
+                        </td>
                         <td class="px-4 py-2 whitespace-nowrap">{{ $a->topic }}</td>
                         <td class="px-4 py-2 max-w-[250px] truncate">{{ $a->notes }}</td>
                         <td class="px-4 py-2 text-center">
@@ -91,7 +97,7 @@
                             @endif
                         </td>
                         <td class="px-4 py-2 text-center">
-                            <div class="flex justify-center gap-2 flex-wrap">
+                            <div class="flex justify-center gap-2">
                                 <a href="{{ route('assistances.edit', $a->id) }}" 
                                    class="text-blue-600 hover:underline">Edit</a>
                                 <form action="{{ route('assistances.destroy', $a->id) }}" 
@@ -107,7 +113,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="text-center text-gray-500 py-3">
+                        <td colspan="7" class="text-center text-gray-500 py-3">
                             Belum ada catatan.
                         </td>
                     </tr>

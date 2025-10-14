@@ -7,12 +7,15 @@ use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+use App\Models\Student;
 
+// 🔹 Redirect root ke halaman login
 Route::get('/', function () {
     return redirect()->route('login');
 });
 
-// ✅ Dashboard pakai controller (bukan closure)
+// 🔹 Dashboard utama
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
@@ -26,9 +29,41 @@ Route::middleware('auth')->group(function () {
 
 // 🔹 Route untuk guru (wali kelas)
 Route::middleware(['auth'])->group(function () {
+
+    /**
+     * 🧾 Fitur Laporan Guru (semua siswa bisa dilaporkan)
+     */
+    Route::get('/assistances/report', [AssistanceController::class, 'reportForm'])
+        ->name('assistances.report.form');
+    Route::post('/assistances/report', [AssistanceController::class, 'storeReport'])
+        ->name('assistances.report.store');
+
+    /**
+     * 🧭 CRUD Catatan Pendampingan (siswa binaan)
+     */
     Route::resource('assistances', AssistanceController::class);
+
+    // Tambah catatan langsung ke siswa tertentu
     Route::post('/students/{student}/assistances', [AssistanceController::class, 'storeForStudent'])
         ->name('students.assistances.store');
+
+    /**
+     * 🔍 Endpoint Pencarian Siswa (untuk autocomplete di form laporan)
+     */
+    Route::get('/students/search', function (Request $request) {
+        $q = $request->get('q');
+        $students = Student::with('classroom')
+            ->where('name', 'like', "%{$q}%")
+            ->orderBy('name')
+            ->limit(10)
+            ->get()
+            ->map(fn($s) => [
+                'id' => $s->id,
+                'name' => $s->name,
+                'classroom' => $s->classroom?->name,
+            ]);
+        return response()->json($students);
+    })->name('students.search');
 });
 
 // 🔹 Route khusus admin
@@ -51,4 +86,4 @@ Route::middleware(['auth', 'admin'])->get('/test-admin', function () {
     return 'Halo Admin!';
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

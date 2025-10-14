@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Assistance;
 use App\Models\Student;
 use Illuminate\Http\Request;
+use App\Models\Teacher;
 
 class AssistanceController extends Controller
 {
@@ -198,4 +199,41 @@ class AssistanceController extends Controller
         return redirect()->route('admin.students.show', $student->id)
             ->with('success', 'Catatan pendampingan berhasil ditambahkan untuk siswa.');
     }
+
+    /**
+ * Form laporan siswa non-binaan (untuk semua guru)
+ */
+public function reportForm()
+{
+    // Semua siswa bisa dilihat
+    $students = \App\Models\Student::orderBy('name')->get();
+    return view('assistances.report', compact('students'));
+}
+
+/**
+ * Simpan laporan siswa non-binaan
+ */
+public function storeReport(Request $request)
+{
+    $request->validate([
+        'student_id' => 'required|exists:students,id',
+        'date' => 'required|date',
+        'topic' => 'required|string|max:255',
+        'notes' => 'nullable|string',
+        'follow_up' => 'nullable|string|max:255',
+        'status' => 'required|in:pending,in_progress,done',
+    ]);
+
+    \App\Models\Assistance::create([
+        'student_id' => $request->student_id,
+        'date' => $request->date,
+        'topic' => $request->topic,
+        'notes' => $request->notes,
+        'follow_up' => $request->follow_up,
+        'status' => $request->status,
+    ]);
+
+    return redirect()->route('assistances.index')->with('success', 'Laporan berhasil dikirim ke guru wali.');
+}
+
 }

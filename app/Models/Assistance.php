@@ -23,4 +23,10 @@ class Assistance extends Model
     {
         return $this->belongsTo(Student::class);
     }
+
+    public function reporter()
+    {
+        return $this->belongsTo(\App\Models\Teacher::class, 'reported_by');
+    }
+
 }

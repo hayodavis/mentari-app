@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Teacher;
 use App\Models\Assistance;
 use App\Models\Student;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Carbon\Carbon;
 
 class TeacherPerformanceController extends Controller
@@ -47,13 +49,25 @@ class TeacherPerformanceController extends Controller
             }
 
             return [
-                'teacher_id'      => $teacher->id, // ✅ ditambahkan biar bisa dipakai di route detail
-                'teacher_name'    => $teacher->name,
+                'teacher_id'        => $teacher->id,
+                'teacher_name'      => $teacher->name,
                 'total_assistances' => $count,
-                'last_activity'   => $lastUpdate,
-                'status'          => $status,
+                'last_activity'     => $lastUpdate,
+                'status'            => $status,
             ];
         });
+
+        // 🔹 Pagination manual (karena ini hasil dari Collection)
+        $perPage = 10;
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $currentItems = $performances->slice(($currentPage - 1) * $perPage, $perPage)->values();
+        $paginatedPerformances = new LengthAwarePaginator(
+            $currentItems,
+            $performances->count(),
+            $perPage,
+            $currentPage,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
 
         // 🔹 Statistik ringkas
         $summary = [
@@ -62,7 +76,12 @@ class TeacherPerformanceController extends Controller
             'kurang' => $performances->where('status', 'Kurang Aktif')->count(),
         ];
 
-        return view('admin.teacher-performance', compact('performances', 'month', 'year', 'summary'));
+        return view('admin.teacher-performance', [
+            'performances' => $paginatedPerformances,
+            'month' => $month,
+            'year' => $year,
+            'summary' => $summary,
+        ]);
     }
 
     /**
@@ -81,7 +100,7 @@ class TeacherPerformanceController extends Controller
             ->orWhere('reported_by', $id)
             ->with(['student.classroom'])
             ->orderByDesc('date')
-            ->get();
+            ->paginate(10); // ✅ Pagination bawaan Laravel
 
         return view('admin.teacher-performance-detail', compact('teacher', 'assistances'));
     }

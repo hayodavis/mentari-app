@@ -22,7 +22,7 @@
             <div>
                 <label class="block text-sm font-medium text-gray-600 mb-1">Tahun</label>
                 <select name="year" 
-                        class="border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                        class="border rounded-md px-7 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
                     @foreach (range(date('Y') - 3, date('Y')) as $y)
                         <option value="{{ $y }}" {{ request('year', date('Y')) == $y ? 'selected' : '' }}>
                             {{ $y }}
@@ -33,11 +33,12 @@
 
             <!-- Tombol tampilkan -->
             <button type="submit"
-                class="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 
-                       text-white font-medium text-sm px-4 rounded-md shadow-sm transition-all duration-200 
-                       h-[40px] min-w-[120px]">
-                🔍 <span>Tampilkan</span>
-            </button>
+    class="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 
+           text-white font-medium text-sm px-4 rounded-md shadow-sm transition-all duration-200"
+    style="min-width:120px;height:38px;display:inline-flex;align-items:center;justify-content:center;">
+    🔍 <span>Tampilkan</span>
+</button>
+
         </form>
 
         <!-- 🔹 Tabel Kinerja Guru (Responsif) -->

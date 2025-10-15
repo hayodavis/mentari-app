@@ -29,9 +29,11 @@
             </div>
 
             <button type="submit"
-                class="bg-indigo-600 text-white px-4 py-2 rounded text-sm hover:bg-indigo-700">
-                🔍 Tampilkan
-            </button>
+    class="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-4 py-2 rounded-md shadow-sm transition-all duration-200"
+    style="min-width: 120px; height: 38px;">
+    🔍 <span>Tampilkan</span>
+</button>
+
         </form>
 
         <!-- 🔹 Tabel Kinerja Guru (Responsif) -->

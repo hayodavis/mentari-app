@@ -1,14 +1,16 @@
 <x-app-layout>
     <div class="py-6 px-4 sm:px-6 lg:px-8">
-        <h1 class="text-2xl font-bold mb-6 text-gray-800">
+        <h1 class="text-2xl font-bold mb-6 text-gray-800 flex items-center gap-2">
             📊 Pemantauan Kinerja Guru Wali
         </h1>
 
-        <!-- Filter Periode -->
-        <form method="GET" action="{{ route('admin.teacherPerformance') }}" class="mb-6 flex flex-wrap gap-3 items-end">
+        <!-- 🔹 Filter Periode -->
+        <form method="GET" action="{{ route('admin.teacherPerformance') }}" 
+              class="mb-6 flex flex-wrap gap-3 items-center sm:items-end">
             <div>
-                <label class="block text-sm font-medium text-gray-600">Bulan</label>
-                <select name="month" class="border rounded px-3 py-2 text-sm">
+                <label class="block text-sm font-medium text-gray-600 mb-1">Bulan</label>
+                <select name="month" 
+                        class="border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
                     @foreach (range(1, 12) as $m)
                         <option value="{{ $m }}" {{ request('month', date('m')) == $m ? 'selected' : '' }}>
                             {{ \Carbon\Carbon::create()->month($m)->translatedFormat('F') }}
@@ -18,8 +20,9 @@
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-600">Tahun</label>
-                <select name="year" class="border rounded px-7 py-2 text-sm">
+                <label class="block text-sm font-medium text-gray-600 mb-1">Tahun</label>
+                <select name="year" 
+                        class="border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
                     @foreach (range(date('Y') - 3, date('Y')) as $y)
                         <option value="{{ $y }}" {{ request('year', date('Y')) == $y ? 'selected' : '' }}>
                             {{ $y }}
@@ -28,12 +31,13 @@
                 </select>
             </div>
 
+            <!-- Tombol tampilkan -->
             <button type="submit"
-    class="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-4 py-2 rounded-md shadow-sm transition-all duration-200"
-    style="min-width: 120px; height: 38px;">
-    🔍 <span>Tampilkan</span>
-</button>
-
+                class="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 
+                       text-white font-medium text-sm px-4 rounded-md shadow-sm transition-all duration-200 
+                       h-[40px] min-w-[120px]">
+                🔍 <span>Tampilkan</span>
+            </button>
         </form>
 
         <!-- 🔹 Tabel Kinerja Guru (Responsif) -->
@@ -43,10 +47,10 @@
                     <thead class="bg-indigo-50">
                         <tr>
                             <th class="px-4 py-3 text-left font-semibold border-b">#</th>
-                            <th class="px-4 py-3 text-left font-semibold border-b">Nama Guru Wali</th>
+                            <th class="px-4 py-3 text-left font-semibold border-b whitespace-nowrap">Nama Guru Wali</th>
                             <th class="px-4 py-3 text-center font-semibold border-b">Jumlah Catatan</th>
-                            <th class="px-4 py-3 text-center font-semibold border-b">Terakhir Mencatat</th>
-                            <th class="px-4 py-3 text-center font-semibold border-b">Status Aktivitas</th>
+                            <th class="px-4 py-3 text-center font-semibold border-b whitespace-nowrap">Terakhir Mencatat</th>
+                            <th class="px-4 py-3 text-center font-semibold border-b whitespace-nowrap">Status Aktivitas</th>
                             <th class="px-4 py-3 text-center font-semibold border-b">Detail</th>
                         </tr>
                     </thead>
@@ -72,8 +76,9 @@
                                 </td>
                                 <td class="px-4 py-2 text-center border-b">
                                     <a href="{{ route('admin.teacherPerformance.detail', ['id' => $p['teacher_id']]) }}"
-                                       class="inline-block bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-xs transition">
-                                        👁️ Lihat
+                                       class="inline-flex items-center gap-1 bg-blue-500 hover:bg-blue-600 
+                                              text-white px-3 py-1 rounded text-xs transition">
+                                        👁️ <span>Lihat</span>
                                     </a>
                                 </td>
                             </tr>
@@ -86,10 +91,11 @@
                         @endforelse
                     </tbody>
                 </table>
+
                 <!-- ✅ Pagination -->
-<div class="px-4 py-3 bg-white border-t border-gray-200">
-    {{ $performances->links() }}
-</div>
+                <div class="px-4 py-3 bg-white border-t border-gray-200">
+                    {{ $performances->links() }}
+                </div>
             </div>
         </div>
 

@@ -25,6 +25,11 @@
                     <x-nav-link :href="route('admin.classrooms.index')" :active="request()->routeIs('admin.classrooms.*')">
                         🏫 Data Kelas
                     </x-nav-link>
+
+                    <!-- 🧭 Tambahan: Kinerja Guru Wali -->
+                    <x-nav-link :href="route('admin.teacherPerformance')" :active="request()->routeIs('admin.teacherPerformance')">
+                        📈 Kinerja Guru Wali
+                    </x-nav-link>
                 @elseif(Auth::user()->role === 'guru')
                     <x-nav-link :href="route('assistances.index')" :active="request()->routeIs('assistances.*')">
                         📑 Catatan Pendampingan
@@ -101,6 +106,11 @@
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('admin.classrooms.index')" :active="request()->routeIs('admin.classrooms.*')">
                     🏫 Data Kelas
+                </x-responsive-nav-link>
+
+                <!-- Tambahan Mobile -->
+                <x-responsive-nav-link :href="route('admin.teacherPerformance')" :active="request()->routeIs('admin.teacherPerformance')">
+                    📈 Kinerja Guru Wali
                 </x-responsive-nav-link>
             @elseif(Auth::user()->role === 'guru')
                 <x-responsive-nav-link :href="route('assistances.index')" :active="request()->routeIs('assistances.*')">

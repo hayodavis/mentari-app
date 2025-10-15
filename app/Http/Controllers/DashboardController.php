@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\Classroom;
@@ -46,4 +47,21 @@ class DashboardController extends Controller
             'topTeachers'
         ));
     }
+
+    public function teacherPerformance(Request $request)
+{
+    $month = $request->get('month', now()->format('Y-m'));
+
+    $data = \App\Models\Teacher::select('teachers.id', 'teachers.name')
+        ->leftJoin('assistances', 'assistances.reported_by', '=', 'teachers.id')
+        ->whereMonth('assistances.date', '=', date('m', strtotime($month)))
+        ->whereYear('assistances.date', '=', date('Y', strtotime($month)))
+        ->selectRaw('COUNT(assistances.id) as total_reports')
+        ->groupBy('teachers.id', 'teachers.name')
+        ->orderByDesc('total_reports')
+        ->get();
+
+    return view('admin.teacher-performance', compact('data'));
+}
+
 }

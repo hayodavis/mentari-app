@@ -40,4 +40,10 @@ class Teacher extends Model
     {
         return $this->hasManyThrough(Assistance::class, Student::class, 'teacher_id', 'student_id');
     }
+
+    public function classroom()
+{
+    return $this->hasOne(\App\Models\Classroom::class, 'teacher_id');
+}
+
 }

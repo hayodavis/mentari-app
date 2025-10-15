@@ -6,6 +6,7 @@ use App\Http\Controllers\AssistanceController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\TeacherPerformanceController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Models\Student;
@@ -57,6 +58,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('teachers', TeacherController::class);
     Route::resource('students', StudentController::class);
     Route::resource('classrooms', ClassroomController::class);
+
+    // ✅ Kinerja Guru Wali
+    Route::get('/teacher-performance', [TeacherPerformanceController::class, 'index'])
+        ->name('teacherPerformance');
+    Route::get('/teacher-performance/{id}', [TeacherPerformanceController::class, 'detail'])
+        ->name('teacherPerformance.detail');
 
     // ✅ Import & Template Guru
     Route::post('/teachers/import', [TeacherController::class, 'import'])->name('teachers.import');

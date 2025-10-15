@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="max-w-3xl mx-auto py-8">
-        <h1 class="text-2xl font-bold mb-6">Laporkan Siswa ke Wali Kelas</h1>
+        <h1 class="text-2xl font-bold mb-6">Laporkan Siswa ke Guru Wali</h1>
 
         <div class="bg-white shadow rounded-lg p-6">
             <form action="{{ route('assistances.report.store') }}" method="POST" class="space-y-4">

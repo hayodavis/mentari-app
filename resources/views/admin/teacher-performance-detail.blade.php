@@ -52,15 +52,19 @@
                                 <td class="px-4 py-2 border-b">{{ $a->follow_up ?: '—' }}</td>
                                 <td class="px-4 py-2 text-center border-b whitespace-nowrap">
                                     @php
-                                        $color = [
-                                            'pending' => 'bg-yellow-100 text-yellow-700',
-                                            'in_progress' => 'bg-blue-100 text-blue-700',
-                                            'done' => 'bg-green-100 text-green-700'
-                                        ][$a->status] ?? 'bg-gray-100 text-gray-700';
-                                    @endphp
-                                    <span class="{{ $color }} px-3 py-1 rounded-full text-xs font-semibold">
-                                        {{ ucfirst(str_replace('_', ' ', $a->status)) }}
-                                    </span>
+    $statusMap = [
+        'pending' => ['label' => 'Pending', 'color' => 'bg-yellow-100 text-yellow-700'],
+        'in_progress' => ['label' => 'Sedang Diproses', 'color' => 'bg-blue-100 text-blue-700'],
+        'done' => ['label' => 'Selesai', 'color' => 'bg-green-100 text-green-700'],
+    ];
+
+    $status = $statusMap[$a->status] ?? ['label' => ucfirst($a->status), 'color' => 'bg-gray-100 text-gray-700'];
+@endphp
+
+<span class="{{ $status['color'] }} px-3 py-1 rounded-full text-xs font-semibold">
+    {{ $status['label'] }}
+</span>
+
                                 </td>
                             </tr>
                         @empty

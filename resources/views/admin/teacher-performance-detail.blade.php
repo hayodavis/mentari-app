@@ -10,11 +10,19 @@
             maupun laporan siswa lain yang dibuat secara langsung.
         </p>
 
-        <!-- Tombol kembali -->
-        <a href="{{ route('admin.teacherPerformance') }}"
-           class="inline-block mb-4 bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-2 rounded text-sm transition">
-            ← Kembali ke Daftar Guru
-        </a>
+        <div class="flex justify-between items-center mb-4">
+    <a href="{{ route('admin.teacherPerformance') }}"
+       class="inline-block bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-2 rounded text-sm transition">
+        ← Kembali ke Daftar Guru
+    </a>
+
+    <a href="{{ route('admin.teacherPerformance.export', ['id' => $teacher->id]) }}"
+       target="_blank"
+       class="inline-flex items-center bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-sm transition">
+        🖨️ Cetak PDF
+    </a>
+</div>
+
 
         <!-- 🔹 Daftar Catatan (Responsif) -->
         <div class="bg-white shadow-md rounded-lg overflow-hidden">

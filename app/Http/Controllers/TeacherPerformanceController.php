@@ -9,6 +9,7 @@ use App\Models\Student;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class TeacherPerformanceController extends Controller
 {
@@ -104,4 +105,24 @@ class TeacherPerformanceController extends Controller
 
         return view('admin.teacher-performance-detail', compact('teacher', 'assistances'));
     }
+
+    public function exportPDF($id)
+{
+    $teacher = \App\Models\Teacher::findOrFail($id);
+    $studentIds = \App\Models\Student::where('teacher_id', $id)->pluck('id');
+
+    $assistances = \App\Models\Assistance::whereIn('student_id', $studentIds)
+        ->orWhere('reported_by', $id)
+        ->with(['student.classroom'])
+        ->orderByDesc('date')
+        ->get();
+
+    $pdf = Pdf::loadView('pdf.teacher-performance-report', [
+        'teacher' => $teacher,
+        'assistances' => $assistances,
+        'date' => now()->translatedFormat('d F Y'),
+    ])->setPaper('a4', 'portrait');
+
+    return $pdf->stream('Laporan_Pendampingan_' . $teacher->name . '.pdf');
+}
 }

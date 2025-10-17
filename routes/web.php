@@ -65,6 +65,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/teacher-performance/{id}', [TeacherPerformanceController::class, 'detail'])
         ->name('teacherPerformance.detail');
 
+    // ✅ Tambahkan di bawah route detail
+    Route::get('/teacher-performance/{id}/export-pdf', [TeacherPerformanceController::class, 'exportPDF'])
+        ->name('teacherPerformance.export');
+
+
     // ✅ Import & Template Guru
     Route::post('/teachers/import', [TeacherController::class, 'import'])->name('teachers.import');
     Route::get('/teachers/template', [TeacherController::class, 'downloadTemplate'])->name('teachers.template');

@@ -22,7 +22,7 @@
             <div>
                 <label class="block text-sm font-medium text-gray-600 mb-1">Tahun</label>
                 <select name="year"
-                        class="border rounded-md px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition w-full sm:w-auto">
+                        class="border rounded-md px-8 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition w-full sm:w-auto">
                     @foreach (range(date('Y') - 3, date('Y')) as $y)
                         <option value="{{ $y }}" {{ request('year', date('Y')) == $y ? 'selected' : '' }}>
                             {{ $y }}

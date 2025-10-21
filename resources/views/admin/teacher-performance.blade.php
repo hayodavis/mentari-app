@@ -5,12 +5,12 @@
         </h1>
 
         <!-- 🔹 Filter Periode -->
-        <form method="GET" action="{{ route('admin.teacherPerformance') }}" 
-              class="mb-6 flex flex-wrap gap-3 items-center sm:items-end">
+        <form method="GET" action="{{ route('admin.teacherPerformance') }}"
+              class="mb-6 flex flex-col sm:flex-row sm:flex-wrap sm:items-end gap-3">
             <div>
                 <label class="block text-sm font-medium text-gray-600 mb-1">Bulan</label>
-                <select name="month" 
-                        class="border rounded-md px-7 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                <select name="month"
+                        class="border rounded-md px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition w-full sm:w-auto">
                     @foreach (range(1, 12) as $m)
                         <option value="{{ $m }}" {{ request('month', date('m')) == $m ? 'selected' : '' }}>
                             {{ \Carbon\Carbon::create()->month($m)->translatedFormat('F') }}
@@ -21,8 +21,8 @@
 
             <div>
                 <label class="block text-sm font-medium text-gray-600 mb-1">Tahun</label>
-                <select name="year" 
-                        class="border rounded-md px-7 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                <select name="year"
+                        class="border rounded-md px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition w-full sm:w-auto">
                     @foreach (range(date('Y') - 3, date('Y')) as $y)
                         <option value="{{ $y }}" {{ request('year', date('Y')) == $y ? 'selected' : '' }}>
                             {{ $y }}
@@ -31,13 +31,13 @@
                 </select>
             </div>
 
-            <!-- Tombol tampilkan -->
-            <button type="submit"
-                class="bg-indigo-600 text-white px-4 py-3 rounded text-sm hover:bg-indigo-700">
-                🔍 Tampilkan
-            </button>
-</button>
-
+            <div>
+                <label class="block text-sm font-medium text-transparent mb-1">_</label>
+                <button type="submit"
+                    class="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-4 py-2 rounded-md shadow-sm transition-all duration-200 w-full sm:w-auto">
+                    🔍 <span>Tampilkan</span>
+                </button>
+            </div>
         </form>
 
         <!-- 🔹 Tabel Kinerja Guru (Responsif) -->
@@ -93,8 +93,13 @@
                 </table>
 
                 <!-- ✅ Pagination -->
-                <div class="px-4 py-3 bg-white border-t border-gray-200">
-                    {{ $performances->links() }}
+                <div class="px-4 py-3 bg-white border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center text-sm">
+                    <div class="text-gray-500 mb-2 sm:mb-0">
+                        Menampilkan {{ $performances->firstItem() ?? 0 }}–{{ $performances->lastItem() ?? 0 }} dari {{ $performances->total() }} data
+                    </div>
+                    <div class="flex justify-center sm:justify-end w-full sm:w-auto">
+                        {{ $performances->onEachSide(1)->links() }}
+                    </div>
                 </div>
             </div>
         </div>
